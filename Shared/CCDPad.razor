@@ -1,0 +1,39 @@
+﻿
+<div class="grid grid-cols-3 grid-rows-3 gap-0">
+
+    <div class="row-start-2 col-start-1 grid place-items-center">
+        <button @onclick="@(() => OnClick.InvokeAsync("ArrowLeft"))"
+            class="rounded-full bg-fuchsia-900 drop-shadow-lg">
+            <img src="./Images/leftarrow.svg" class="h-8" />
+        </button>
+    </div>
+
+    <div class="row-start-1 col-start-2 grid place-items-center">
+        <button @onclick="@(() => OnClick.InvokeAsync("ArrowUp"))"
+            class="rounded-full bg-fuchsia-900 drop-shadow-lg">
+            <img src="./Images/uparrow.svg" class="h-8" />
+        </button>
+    </div>
+
+    <div class="row-start-2 col-start-3 grid place-items-center">
+        <button @onclick="@(() => OnClick.InvokeAsync("ArrowRight"))"
+            class="rounded-full bg-fuchsia-900 drop-shadow-lg">
+            <img src="./Images/rightarrow.svg" class="h-8" />
+        </button>
+    </div>
+
+    <div class="row-start-3 col-start-2 grid place-items-center">
+        <button @onclick="@(() => OnClick.InvokeAsync("ArrowDown"))"
+            class="rounded-full bg-fuchsia-900 drop-shadow-lg">
+            <img src="./Images/downarrow.svg" class="h-8" />
+        </button>
+    </div>
+
+</div>
+
+@code {
+
+    [Parameter] 
+    public EventCallback<string> OnClick { get; set; }
+
+}

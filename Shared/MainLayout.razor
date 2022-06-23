@@ -1,0 +1,27 @@
+﻿@inherits LayoutComponentBase
+
+<div>
+    <div class="flex bg-zinc-900 h-screen flex-col font-sans">
+
+        <main class="px-9 py-9 h-screen">
+            <article class="h-full">
+                @Body
+            </article>
+        </main>
+
+        <footer class="inset-x-0 bottom-0 flex-col px-12 pb-3 bg-gray-800">
+            <div>
+                <CCNavBar />
+            </div>
+            <div class="grow">
+                <CCFooter />
+            </div>
+        </footer>
+    </div>
+</div>
+
+
+@code {
+
+
+}

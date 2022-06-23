@@ -1,0 +1,94 @@
+﻿@inject IJSRuntime JsRuntime;
+@inject ISnakeGameService snake;
+@inject ILogger<CCSnake> logger;
+<div>
+    <div @onkeydown="@EventKeyDown" class="bg-black" @ref="_canvasContainer" tabindex="0">
+        <BECanvas Width="@snake.canvasWidth"
+                  Height="@snake.canvasHeight"
+                  @ref="_canvasReference">
+        </BECanvas>
+    </div>
+
+    <div class="mx-32 my-8">
+        <CCDPad OnClick="DPadClick" />
+    </div>
+</div>
+
+
+@code {
+    ElementReference _canvasContainer;
+
+    private Canvas2DContext? _context;
+
+    protected BECanvasComponent? _canvasReference;
+
+    private string[] gameControls = new string[]
+    {
+        "ArrowLeft",
+        "ArrowUp",
+        "ArrowRight",
+        "ArrowDown",
+    };
+
+    private long gridUnit = 10;
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await snake.InitService(_canvasReference);
+
+            await _canvasContainer.FocusAsync();
+        }
+
+        await JsRuntime.InvokeAsync<object>("initRenderJS", DotNetObjectReference.Create(this));
+
+        //if (snake.isGameActive)
+        //{
+        //    await Task.Delay(1000 / 60);
+        //    StateHasChanged();
+        //    logger.LogInformation("Loop");
+
+        //}
+
+        await base.OnInitializedAsync();
+
+    }
+
+    //render loop
+    [JSInvokable]
+    public async ValueTask RenderInBlazor(float timeStamp)
+    {
+        if (snake.isGameActive)
+            await snake.ChangeSnakeDirection("ArrowUp");
+    }
+
+    private async Task EventKeyDown(KeyboardEventArgs args)
+    {
+        if (!gameControls.Contains(args.Key))
+            return;
+
+        await HandleGameInput(args.Key);
+
+    }
+
+    private async Task DPadClick(string direction)
+    {
+        await HandleGameInput(direction);
+    }
+
+    private async Task HandleGameInput(string userInput)
+    {
+        //check if game is active, if its not, clear canvas and start, if it is change animation accordingly
+        if (!snake.isGameActive)
+        {
+            await snake.StartSnakeGame();
+            await snake.ChangeSnakeDirection(userInput);
+        }
+        else
+            await snake.ChangeSnakeDirection(userInput);
+    }
+
+
+}

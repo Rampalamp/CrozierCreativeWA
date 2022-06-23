@@ -1,0 +1,70 @@
+﻿@page "/"
+
+<PageTitle>Home</PageTitle>
+
+<div class="flex grow text-green-500 text-2xl h-full">
+    <div class="grid grid-cols-3 gap-0 grow place-items-center">
+
+        @*First column - Presents text*@
+        <div class="-skew-y-12 font-mono">
+            <span class="text-3xl">CrozierCreative Presents...</span> 
+            <br />
+            <br />
+            <p  id="typeWrite" style="--n:167">
+                A game launched in 1997 on the Nokia 6110, developed by Taneli Armanto during a time when I was most likely playing Sega, or perhaps even... outside... but not likely.
+            </p>
+        </div>
+
+        @*Second column - Snake game + d pad*@
+        <div class="mt-8 flex grow justify-center">
+            <div class="shadow-inner">
+                <CCSnake/>
+            </div>
+        </div>
+
+        @*Third column - scoreboard*@
+        <div class="skew-y-12 pr-6">
+            <table class="text-center float-right">
+                <tr>
+                    <td class="border-dashed border-2 border-green-500 p-2">
+                        
+                        <span>Name</span>
+                    </td>
+                    <td class="border-dashed border-2 border-green-500 p-2 ">
+                        <span>Score</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="border-dashed border-2 border-green-500 p-2 items-center">
+                        POP
+                    </td>
+                    <td class="border-dashed border-2 border-green-500 p-2 items-center">
+                        123456
+                    </td>
+                </tr>
+                <tr>
+                    <td class="border-dashed border-2 border-green-500 p-2 items-center">
+                        POP
+                    </td>
+                    <td class="border-dashed border-2 border-green-500 p-2 items-center">
+                        123456
+                    </td>
+                </tr>
+                <tr>
+                    <td class="border-dashed border-2 border-green-500 p-2 items-center">
+                        POP
+                    </td>
+                    <td class="border-dashed border-2 border-green-500 p-2 items-center">
+                        123456
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+
+@code {
+    
+}
