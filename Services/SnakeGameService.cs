@@ -18,7 +18,7 @@ public class SnakeGameService : ISnakeGameService
     private string title => "SNAKE";
     private string instructions => "Press any arrow button or key to start...";
     private string? currentDirection { get; set; }
-
+    private double renderCount { get; set; }
 
 
     public async Task InitService(BECanvasComponent? canvasReference)
@@ -62,27 +62,77 @@ public class SnakeGameService : ISnakeGameService
         await SpawnSnake();
     }
 
-    public async Task ChangeSnakeDirection(string newDirection) =>
-        await Task.Run(async () =>
-        {
-            currentDirection = newDirection;
-            await SpawnApple();
+    public async Task ChangeSnakeDirection(string newDirection) => await Task.Run(() => currentDirection = newDirection);
 
-        });
-    
+    public async Task MoveSnake()
+    {
+        //below determines the speed of the snake.
+        //Tried throwing in decimals between 0 - 1, it seems to cause a streaming tail behind the snake, but if the numbers are hole, the snake doesnt have an ever expanding tail...
+        if (renderCount < 1)
+        {
+            renderCount++;
+            return;
+        }
+        //reset renderCount to 0 if it passed first check
+        renderCount = 0;
+
+        switch (currentDirection)
+        {
+            case "ArrowLeft":
+                await CheckAndStep(-1, 0);
+                break;
+            case "ArrowUp":
+                await CheckAndStep(0, -1);
+                break;
+            case "ArrowRight":
+                await CheckAndStep(1, 0);
+                break;
+            case "ArrowDown":
+                await CheckAndStep(0, 1);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private async Task CheckAndStep(double x, double y)
+    {
+        //trim the tail of the snake the same amount it moves forward, then redraw snake
+        double oldX = snakeGame!.Snake!.HeadPosX;
+        double oldY = snakeGame!.Snake!.HeadPosY;
+
+        snakeGame!.Snake!.HeadPosX = oldX + x;
+        snakeGame!.Snake!.HeadPosY = oldY + y;
+
+        await _context!.SetFillStyleAsync(snakeGame!.Snake!.Color);
+
+        await _context!.BeginBatchAsync();
+
+        await _context!.ClearRectAsync(oldX, oldY, snakeGame!.Snake.BaseWidth, snakeGame!.Snake.BaseHeight);
+        await _context!.FillRectAsync(snakeGame!.Snake.HeadPosX, snakeGame!.Snake.HeadPosY, snakeGame!.Snake.BaseWidth, snakeGame!.Snake.BaseHeight);
+
+        await _context!.EndBatchAsync();
+    }
 
     private async Task ClearCanvas() => await _context!.ClearRectAsync(0, 0, canvasWidth, canvasHeight);
 
     private async Task SpawnApple()
     {
-        //clear old apple
-        await _context!.ClearRectAsync(snakeGame!.Apple!.PosX, snakeGame!.Apple!.PosY, snakeGame!.Apple!.Width, snakeGame!.Apple!.Height);
+        //going to batch this, grab old values, refresh apple, then batch clear and fill commands.
+        double oldX = snakeGame!.Apple!.PosX;
+        double oldY = snakeGame!.Apple!.PosY;
 
         snakeGame.RefreshApplePosition();
 
         await _context!.SetFillStyleAsync(snakeGame!.Apple!.Color);
 
+        await _context!.BeginBatchAsync();
+        //clear old apple
+        await _context!.ClearRectAsync(oldX, oldY, snakeGame!.Apple!.Width, snakeGame!.Apple!.Height);
+        //set new apple
         await _context!.FillRectAsync(snakeGame!.Apple!.PosX, snakeGame!.Apple!.PosY, snakeGame!.Apple!.Width, snakeGame!.Apple!.Height);
+        await _context!.EndBatchAsync();
+
     }
 
     private async Task SpawnSnake()
@@ -116,7 +166,7 @@ public class SnakeGameService : ISnakeGameService
             Snake = new Snake(tenthX, tenthY);
             //the random apple coordinates could result in part of the apple being off canvas, need to consider the 10,10 dimensions of apple and prevent overflow
             RefreshApplePosition();
-            
+
             Score = 0;
         }
 
@@ -146,7 +196,7 @@ public class SnakeGameService : ISnakeGameService
 
         public Apple()
         {
-            
+
             this.PosX = 0;
             this.PosY = 0;
             Width = 10;

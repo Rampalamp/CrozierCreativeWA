@@ -12,11 +12,11 @@ public interface ISnakeGameService
     SnakeGameService.SnakeGame? snakeGame { get; set; }
     bool isGameActive { get; set; }
 
+    Task InitService(BECanvasComponent? canvasReference);
 
     Task StartSnakeGame();
 
     Task ChangeSnakeDirection(string direction);
 
-    Task InitService(BECanvasComponent? canvasReference);
-
+    Task MoveSnake();
 }

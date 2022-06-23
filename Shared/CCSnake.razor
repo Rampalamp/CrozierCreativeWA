@@ -1,6 +1,6 @@
 ﻿@inject IJSRuntime JsRuntime;
 @inject ISnakeGameService snake;
-@inject ILogger<CCSnake> logger;
+
 <div>
     <div @onkeydown="@EventKeyDown" class="bg-black" @ref="_canvasContainer" tabindex="0">
         <BECanvas Width="@snake.canvasWidth"
@@ -40,9 +40,10 @@
             await snake.InitService(_canvasReference);
 
             await _canvasContainer.FocusAsync();
-        }
 
-        await JsRuntime.InvokeAsync<object>("initRenderJS", DotNetObjectReference.Create(this));
+            await JsRuntime.InvokeAsync<object>("initRenderJS", DotNetObjectReference.Create(this));
+
+        }
 
         //if (snake.isGameActive)
         //{
@@ -61,7 +62,7 @@
     public async ValueTask RenderInBlazor(float timeStamp)
     {
         if (snake.isGameActive)
-            await snake.ChangeSnakeDirection("ArrowUp");
+            await snake.MoveSnake();
     }
 
     private async Task EventKeyDown(KeyboardEventArgs args)
